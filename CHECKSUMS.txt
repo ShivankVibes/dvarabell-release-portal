@@ -1,0 +1,10 @@
+SHA256 checksums (generated: 2026-06-03)
+
+244bd6ee7403a23320bbed726596f7685a855f653bb8360feb40a8db05648ec3  DvaraBell.apk
+97b931eda61e85cef240238f05929ad3e39d32c8c1990d886960cd1f8c31c1bd  DvaraBell.ipa
+
+Instructions: After downloading, verify the file with a SHA-256 tool. Example (macOS/Linux):
+
+  shasum -a 256 DvaraBell.apk
+
+The output should match the checksum above.

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DvaraBell — Download Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 18%),
+                  linear-gradient(160deg, #071126 0%, #152E6A 40%, #42215D 70%, #C86B23 100%);
+      color: #F0F8FF;
+      overflow-x: hidden;
+    }
+
+    /* ─── Ambient blobs ─── */
+    body::before {
+      content: '';
+      position: fixed; left: -120px; top: 20%;
+      width: 360px; height: 360px; border-radius: 50%;
+      background: rgba(245,166,35,0.23); filter: blur(92px);
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed; right: -100px; bottom: 8%;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: rgba(255,255,255,0.18); filter: blur(56px);
+      pointer-events: none;
+    }
+
+    /* ─── Floating dots ─── */
+    .dots { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .dots span {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.14);
+      box-shadow: 0 0 12px rgba(255,255,255,0.16);
+      opacity: 0.6; animation: floatDot 18s ease-in-out infinite;
+    }
+    .dots span:nth-child(1){ width:12px;height:12px;top:12%;left:22%;animation-delay:0s; }
+    .dots span:nth-child(2){ width:10px;height:10px;top:32%;left:75%;animation-delay:2s; }
+    .dots span:nth-child(3){ width:8px; height:8px; top:54%;left:42%;animation-delay:4s; }
+    .dots span:nth-child(4){ width:14px;height:14px;top:72%;left:18%;animation-delay:1s; }
+    .dots span:nth-child(5){ width:9px; height:9px; top:20%;left:56%;animation-delay:3s; }
+    .dots span:nth-child(6){ width:11px;height:11px;top:84%;left:66%;animation-delay:5s; }
+    .dots span:nth-child(7){ width:7px; height:7px; top:45%;left:88%;animation-delay:6s; }
+    .dots span:nth-child(8){ width:13px;height:13px;top:62%;left:6%; animation-delay:8s; }
+    @keyframes floatDot {
+      0%,100%{ transform:translateY(0) scale(1); opacity:.6; }
+      50%{ transform:translateY(-8px) scale(1.05); opacity:.8; }
+    }
+
+    /* ─── Layout ─── */
+    .page { position:relative; z-index:1; max-width:1120px; margin:0 auto; padding:40px 24px 60px; }
+
+    /* ─── Temporary Banner ─── */
+    .temp-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 22px;
+      margin-bottom: 28px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(245,166,35,0.18), rgba(245,166,35,0.08));
+      border: 1px solid rgba(245,166,35,0.4);
+      box-shadow: 0 8px 32px rgba(245,166,35,0.12);
+      animation: bannerPulse 3s ease-in-out infinite;
+    }
+    @keyframes bannerPulse {
+      0%,100%{ border-color: rgba(245,166,35,0.4); }
+      50%{ border-color: rgba(245,166,35,0.7); }
+    }
+    .temp-banner .banner-icon {
+      font-size: 28px; flex-shrink: 0;
+    }
+    .temp-banner .banner-text { flex: 1; }
+    .temp-banner .banner-text strong {
+      display: block; color: #FFDAA1; font-size: 0.95rem; font-weight: 700; margin-bottom: 3px;
+    }
+    .temp-banner .banner-text span {
+      color: #D4E6F1; font-size: 0.85rem; line-height: 1.5;
+    }
+    .store-badges {
+      display: flex; gap: 10px; flex-shrink: 0;
+    }
+    .store-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 14px; border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-size: 0.78rem; font-weight: 600; color: #E8F2FF;
+      opacity: 0.7;
+    }
+    .store-badge .soon-chip {
+      font-size: 0.6rem; font-weight: 700;
+      background: rgba(245,166,35,0.3); color: #FFDAA1;
+      padding: 2px 6px; border-radius: 999px; letter-spacing: 0.05em;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 36px; align-items: center; margin-bottom: 32px;
+    }
+    h1 {
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      line-height: 0.98; letter-spacing: -0.06em;
+      max-width: 13ch; text-shadow: 0 24px 70px rgba(0,0,0,0.24);
+    }
+    p.lead {
+      margin-top: 18px; color: #D7E8FF;
+      font-size: 1.02rem; line-height: 1.8; max-width: 42rem;
+    }
+    .pill {
+      display: inline-flex; margin-top: 20px;
+      padding: 10px 16px; border-radius: 999px;
+      border: 1px solid rgba(245,166,35,0.24);
+      background: rgba(245,166,35,0.16);
+      color: #FFDD9C; font-weight: 700; letter-spacing: 0.02em;
+      font-size: 0.85rem;
+    }
+    .visual {
+      position: relative; min-height: 280px; border-radius: 34px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08); overflow: hidden;
+      box-shadow: 0 30px 120px rgba(0,0,0,0.22);
+    }
+    .visual::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(255,255,255,0.1), transparent 45%);
+      pointer-events: none;
+    }
+    .visual .spark {
+      position: absolute; width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(255,255,255,0.9); box-shadow: 0 0 30px rgba(255,255,255,0.65);
+      top: 22%; left: 18%; animation: floaty 8s ease-in-out infinite;
+    }
+    .visual .spark.two{ left:78%;top:16%;animation-duration:10s; }
+    .visual .spark.three{ left:42%;top:72%;animation-duration:7.5s; }
+    .visual .grid-lines {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 44px 44px; opacity: 0.6; pointer-events: none;
+    }
+    @keyframes floaty {
+      0%,100%{ transform:translateY(0) scale(1); }
+      50%{ transform:translateY(-18px) scale(1.05); }
+    }
+
+    /* ─── Tab Nav ─── */
+    .tab-nav {
+      display: flex; gap: 6px;
+      padding: 6px; border-radius: 18px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      margin-bottom: 28px; width: fit-content;
+    }
+    .tab-btn {
+      padding: 11px 22px; border-radius: 13px;
+      background: transparent; border: none;
+      color: #9CB8D8; font-family: 'Inter', sans-serif;
+      font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; transition: all 0.22s ease;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .tab-btn:hover { color: #E8F2FF; background: rgba(255,255,255,0.06); }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(245,166,35,0.28), rgba(245,166,35,0.14));
+      color: #FFDD9C; border: 1px solid rgba(245,166,35,0.35);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ─── Feature cards ─── */
+    .features {
+      display: grid; gap: 18px; margin-bottom: 28px;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+    .feature-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 24px; padding: 22px; color: #E8F2FF;
+    }
+    .feature-card h3 { margin-bottom: 8px; font-size: 1rem; color: #FFDAA1; }
+    .feature-card p { line-height: 1.8; color: #D4E6F1; font-size: 0.9rem; }
+
+    /* ─── Download cards ─── */
+    .download-grid {
+      display: grid; gap: 22px;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+    .card {
+      position: relative;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 28px; padding: 28px 30px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 28px 90px rgba(0,0,0,0.18);
+      overflow: hidden;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .card:hover { transform: translateY(-4px); border-color: rgba(245,166,35,0.4); }
+    .card h2 { font-size: 1.25rem; margin-bottom: 12px; }
+    .card p { color: #D4E6F1; line-height: 1.75; margin-bottom: 20px; font-size: 0.92rem; }
+    .card .label { display: inline-flex; gap: 8px; align-items: center; color: #FFDD9C; font-weight: 700; margin-bottom: 14px; font-size: 0.85rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 20px; border-radius: 14px; text-decoration: none;
+      color: #13203A; font-weight: 700; font-size: 0.92rem;
+      background: linear-gradient(135deg, #F5A623, #FFDAA1);
+      box-shadow: 0 14px 28px rgba(245,166,35,0.2);
+      transition: transform 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn span { display:inline-flex; width:30px; height:30px; align-items:center; justify-content:center; border-radius:10px; background:rgba(255,255,255,0.85); color:#13203A; }
+
+    /* ─── Coming soon badge on IPA card ─── */
+    .coming-soon-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 18px; border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px dashed rgba(245,166,35,0.35);
+      color: #FFDAA1; font-weight: 600; font-size: 0.88rem;
+    }
+    .coming-soon-badge .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #F5A623;
+      animation: dotPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%,100%{ opacity:1; transform:scale(1); }
+      50%{ opacity:0.4; transform:scale(0.7); }
+    }
+    .not-released-notice {
+      display: flex; align-items: flex-start; gap: 12px;
+      margin-top: 16px; padding: 14px 16px; border-radius: 14px;
+      background: rgba(255,100,50,0.08);
+      border: 1px solid rgba(255,100,50,0.2);
+      font-size: 0.83rem; color: #FFBCAA; line-height: 1.6;
+    }
+    .not-released-notice .ni-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── Login panel ─── */
+    .login-panel {
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 18px;
+      margin: 28px 0; padding: 24px 28px;
+      border: 1px solid rgba(255,255,255,0.16); border-radius: 28px;
+      background: rgba(255,255,255,0.08);
+    }
+    .login-panel strong { display:block; font-size:1rem; margin-bottom:8px; color:#F5A623; }
+    .login-panel p { color:#D4E6F1; line-height:1.8; max-width:580px; font-size:0.9rem; }
+    .secondary-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 14px 20px; border-radius: 14px; color: #F0F8FF;
+      text-decoration: none; font-size: 0.9rem; font-weight: 600;
+      background: rgba(12,25,58,0.95); border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .secondary-btn:hover { transform:translateY(-2px); background:rgba(16,36,92,0.98); }
+
+    /* ─── HOW TO USE TAB ─── */
+    .how-section {
+      max-width: 720px; margin: 0 auto;
+    }
+    .how-header {
+      text-align: center; padding: 10px 0 28px;
+    }
+    .how-header .bell-icon {
+      font-size: 44px; display: block; margin-bottom: 14px;
+      filter: drop-shadow(0 0 18px rgba(245,166,35,0.5));
+    }
+    .how-header h2 {
+      font-size: 1.8rem; font-weight: 800; color: #fff;
+      margin-bottom: 6px; letter-spacing: -0.03em;
+    }
+    .how-header p { color: #D4E6F1; font-size: 0.95rem; }
+
+    .step-card {
+      display: flex; align-items: flex-start; gap: 18px;
+      padding: 20px 22px; margin-bottom: 14px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .step-card:hover { transform: translateX(4px); border-color: rgba(245,166,35,0.35); }
+    .step-icon-wrap {
+      flex-shrink: 0; width: 54px; height: 54px;
+      border-radius: 50%;
+      background: rgba(245,166,35,0.16);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+    .step-num {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
+      color: rgba(245,166,35,0.8); line-height: 1;
+      margin-bottom: 2px;
+    }
+    .step-emoji { font-size: 20px; line-height: 1; }
+    .step-body { flex: 1; }
+    .step-body h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 5px; }
+    .step-body p { font-size: 0.86rem; color: #D4E6F1; line-height: 1.7; }
+
+    /* Video row */
+    .video-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 20px; margin-bottom: 14px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(200,50,50,0.3);
+      border-radius: 20px; cursor: pointer; text-decoration: none;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .video-row:hover { transform: translateX(4px); border-color: rgba(200,50,50,0.55); }
+    .video-icon-wrap {
+      flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(200,50,50,0.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .video-row .video-text { flex: 1; }
+    .video-row .video-text strong { display: block; font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .video-row .video-text span { font-size: 0.8rem; color: #D4E6F1; }
+    .video-row .ext-arrow { font-size: 18px; color: #D4E6F1; }
+
+    /* Pro tip */
+    .pro-tip {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px 22px;
+      background: rgba(245,166,35,0.08);
+      border: 1px solid rgba(245,166,35,0.25);
+      border-radius: 20px; margin-top: 6px;
+    }
+    .pro-tip .tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .pro-tip .tip-body h3 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .pro-tip .tip-body p { font-size: 0.84rem; color: #D4E6F1; line-height: 1.75; }
+
+    /* ─── Footer ─── */
+    .footer {
+      margin-top: 36px; display: flex; flex-wrap: wrap; gap: 18px;
+      align-items: center; justify-content: space-between;
+      padding: 24px 30px; border-radius: 26px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+    .footer strong { color: #F5A623; }
+    .footer p { color: #D4E6F1; font-size: 0.88rem; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; }
+      .download-grid { grid-template-columns: 1fr; }
+      .features { grid-template-columns: 1fr; }
+      .store-badges { flex-direction: column; }
+      .temp-banner { flex-wrap: wrap; }
+    }
+    @media (max-width: 540px) {
+      .tab-btn { padding: 9px 14px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dots">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <main class="page">
+
+    <!-- ══ TEMPORARY NOTICE BANNER ══ -->
+    <div class="temp-banner">
+      <div class="banner-icon">⚠️</div>
+      <div class="banner-text">
+        <strong>This is a temporary release portal</strong>
+        <span>Official app store releases are coming soon. DvaraBell will be available on the Google Play Store and Apple App Store — stay tuned!</span>
+      </div>
+      <div class="store-badges">
+        <div class="store-badge">
+          <span>▶</span> Google Play <span class="soon-chip">SOON</span>
+        </div>
+        <div class="store-badge">
+          <span>🍎</span> App Store <span class="soon-chip">SOON</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ HERO ══ -->
+    <section class="hero">
+      <div>
+        <h1>Download the DvaraBell apps directly.</h1>
+        <p class="lead">A simple static page for getting the Android APK and iOS app file. No signup, no app store wait — just direct app access for quick testing or sharing.</p>
+        <div class="pill">Direct downloads • free to use • app-store free</div>
+      </div>
+      <div class="visual">
+        <div class="grid-lines"></div>
+        <div class="spark"></div>
+        <div class="spark two"></div>
+        <div class="spark three"></div>
+      </div>
+    </section>
+
+    <!-- ══ TAB NAV ══ -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('downloads', this)" id="tab-downloads">
+        ⬇️ Downloads
+      </button>
+      <button class="tab-btn" onclick="switchTab('howto', this)" id="tab-howto">
+        ❓ How To Use
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════ -->
+    <!--          DOWNLOADS TAB            -->
+    <!-- ══════════════════════════════════ -->
+    <div class="tab-panel active" id="panel-downloads">
+
+      <section class="features">
+        <div class="feature-card">
+          <h3>Easy app download</h3>
+          <p>Get the DvaraBell app file directly for Android or iOS — no app store search needed.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Live visitor calling</h3>
+          <p>DvaraBell uses WebRTC so your phone connects to visitors instantly, just like a video call.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Free to download</h3>
+          <p>Download both app files without cost. This page is just for getting the apps fast.</p>
+        </div>
+      </section>
+
+      <section class="download-grid">
+
+        <!-- Android APK -->
+        <article class="card">
+          <div class="label">🤖 Android</div>
+          <h2>Download APK</h2>
+          <p>Tap below to download the Android APK file. Install it on your Android phone to run DvaraBell.</p>
+          <a class="btn" href="dvarabell 6.6.26.apk" download="DvaraBell.apk">
+            <span>⬇</span> Download APK
+          </a>
+        </article>
+
+        <!-- iOS IPA — Coming Soon -->
+        <article class="card">
+          <div class="label">🍎 iOS</div>
+          <h2>Download IPA</h2>
+          <p>The iOS IPA file will be available here soon. The App Store release is also on its way!</p>
+
+          <div class="coming-soon-badge">
+            <div class="dot"></div>
+            Not yet released — coming soon
+          </div>
+
+          <div class="not-released-notice">
+            <span class="ni-icon">ℹ️</span>
+            <span>The iOS version is <strong>not yet publicly released</strong>. We are working on distributing it via TestFlight and the Apple App Store. Check back here for the download link once it's ready.</span>
+          </div>
+        </article>
+
+      </section>
+
+      <section style="margin-top:16px;">
+        <small style="color:#BFDFFF;">Verified checksums available: <a href="CHECKSUMS.txt" style="color:#FFDAA1; text-decoration:underline;" target="_blank" rel="noopener">CHECKSUMS.txt</a></small>
+      </section>
+
+      <section class="login-panel">
+        <div>
+          <strong>Need the full web login?</strong>
+          <p>Open the live DvaraBell dashboard to sign in and manage the app from the browser.</p>
+        </div>
+        <a class="secondary-btn" href="https://dvarabell-y5j2.onrender.com/" target="_blank" rel="noopener">Go to Dashboard</a>
+      </section>
+
+    </div><!-- /panel-downloads -->
+
+    <!-- ══════════════════════════════════ -->
+    <!--          HOW TO USE TAB           -->
+    <!-- ══════════════════════════════════ -->
+    <div class="tab-panel" id="panel-howto">
+      <div class="how-section">
+
+        <div class="how-header">
+          <span class="bell-icon">🔔</span>
+          <h2>How To Use DvaraBell</h2>
+          <p>Set up your smart doorbell in minutes</p>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step-card">
+          <div class="step-icon-wrap">
+            <div class="step-num">01</div>
+            <div class="step-emoji">📱</div>
+          </div>
+          <div class="step-body">
+            <h3>Get Your QR Code</h3>
+            <p>Open the Home tab to see your personal QR code and numeric access code. This is unique to your door.</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card">
+          <div class="step-icon-wrap">
+            <div class="step-num">02</div>
+            <div class="step-emoji">🖨️</div>
+          </div>
+          <div class="step-body">
+            <h3>Print &amp; Place It</h3>
+            <p>Print the QR code and stick it near your front door, gate, or anywhere visitors will see it.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card">
+          <div class="step-icon-wrap">
+            <div class="step-num">03</div>
+            <div class="step-emoji">📲</div>
+          </div>
+          <div class="step-body">
+            <h3>Visitor Scans It</h3>
+            <p>Visitors point their phone camera at the QR code — no app needed. It opens instantly in their browser.</p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card">
+          <div class="step-icon-wrap">
+            <div class="step-num">04</div>
+            <div class="step-emoji">🔔</div>
+          </div>
+          <div class="step-body">
+            <h3>You Get a Call</h3>
+            <p>Your phone rings with a full-screen alert. Answer or decline right from the lock screen.</p>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-card">
+          <div class="step-icon-wrap">
+            <div class="step-num">05</div>
+            <div class="step-emoji">📹</div>
+          </div>
+          <div class="step-body">
+            <h3>Live Video Call</h3>
+            <p>Accept the call to see and speak to your visitor in real time — even from anywhere in the world.</p>
+          </div>
+        </div>
+
+        <!-- Watch video -->
+        <a class="video-row" href="https://www.youtube.com/watch?v=XRAiEIewsRc" target="_blank" rel="noopener">
+          <div class="video-icon-wrap">▶️</div>
+          <div class="video-text">
+            <strong>Watch: How It Works</strong>
+            <span>Opens in YouTube</span>
+          </div>
+          <span class="ext-arrow">↗</span>
+        </a>
+
+        <!-- Pro Tip -->
+        <div class="pro-tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-body">
+            <h3>Pro Tip</h3>
+            <p>For the best experience, keep DvaraBell running in the background. This ensures you never miss a visitor — your phone will alert you instantly the moment someone rings your door.</p>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /panel-howto -->
+
+    <!-- ══ FOOTER ══ -->
+    <section class="footer">
+      <div>
+        <strong>Ready to download.</strong>
+        <p>Select your device and download the app file instantly. This page is for people who want DvaraBell right now.</p>
+        <p style="margin-top:8px;">
+          <a href="TERMS_AND_CONDITIONS.md" target="_blank" rel="noopener" style="color:#FFDAA1; text-decoration:underline;">Terms &amp; Conditions</a>
+          &nbsp;·&nbsp;
+          <a href="PRIVACY_POLICY.md" target="_blank" rel="noopener" style="color:#FFDAA1; text-decoration:underline;">Privacy Policy</a>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function switchTab(name, btn) {
+      // Hide all panels
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      // Deactivate all buttons
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      // Show selected
+      document.getElementById('panel-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>
