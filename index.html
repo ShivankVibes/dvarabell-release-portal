@@ -1,606 +1,1041 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DvaraBell — Download Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>DvaraBell — Downloads &amp; Quick Setup</title>
+  <meta name="description"
+    content="Download DvaraBell on Google Play or direct install. Smart intercom with live WebRTC video doorbell calls.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/png" href="logo.png">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { min-height: 100%; }
+    /* ═══════════════════════════════════════════════════
+       DvaraBell Scenic Dark Palette (from App Brand Tokens)
+       Deep Midnight: #0D1B3E  Mid Sky: #1A3A6B
+       Dusk Purple:   #4A2060  Brand Accent: #F5A623 / #E8940A
+       Soft Sky Text: #D4E6F1  Muted: #7FADD4 / #A8C6E0
+       ═══════════════════════════════════════════════════ */
+    :root {
+      --sky-top: #0D1B3E;
+      --sky-mid: #1A3A6B;
+      --sky-dusk: #4A2060;
+      --brand: #F5A623;
+      --brand-hover: #FFAF38;
+      --brand-glow: rgba(245, 166, 35, 0.28);
+      --green-play: #00C853;
+      --green-glow: rgba(0, 200, 83, 0.25);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --card-hover-border: rgba(245, 166, 35, 0.35);
+      --text-main: #FFFFFF;
+      --text-sub: #D4E6F1;
+      --text-muted: #8AAECD;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
     body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 18%),
-                  linear-gradient(160deg, #071126 0%, #152E6A 40%, #42215D 70%, #C86B23 100%);
-      color: #F0F8FF;
-      overflow-x: hidden;
+      min-height: 100%;
+      background-color: var(--sky-top);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── Ambient blobs ─── */
-    body::before {
-      content: '';
-      position: fixed; left: -120px; top: 20%;
-      width: 360px; height: 360px; border-radius: 50%;
-      background: rgba(245,166,35,0.23); filter: blur(92px);
+    body {
+      background: radial-gradient(120% 80% at 50% 0%, rgba(26, 58, 107, 0.6) 0%, rgba(74, 32, 96, 0.4) 50%, var(--sky-top) 100%),
+        var(--sky-top);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ambient glow mesh */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
       pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
     }
-    body::after {
+
+    .ambient-glow::before {
       content: '';
-      position: fixed; right: -100px; bottom: 8%;
-      width: 260px; height: 260px; border-radius: 50%;
-      background: rgba(255,255,255,0.18); filter: blur(56px);
-      pointer-events: none;
+      position: absolute;
+      top: -120px;
+      right: 10%;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 166, 35, 0.12) 0%, transparent 70%);
+      filter: blur(60px);
     }
 
-    /* ─── Floating dots ─── */
-    .dots { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-    .dots span {
-      position: absolute; border-radius: 50%;
-      background: rgba(255,255,255,0.14);
-      box-shadow: 0 0 12px rgba(255,255,255,0.16);
-      opacity: 0.6; animation: floatDot 18s ease-in-out infinite;
-    }
-    .dots span:nth-child(1){ width:12px;height:12px;top:12%;left:22%;animation-delay:0s; }
-    .dots span:nth-child(2){ width:10px;height:10px;top:32%;left:75%;animation-delay:2s; }
-    .dots span:nth-child(3){ width:8px; height:8px; top:54%;left:42%;animation-delay:4s; }
-    .dots span:nth-child(4){ width:14px;height:14px;top:72%;left:18%;animation-delay:1s; }
-    .dots span:nth-child(5){ width:9px; height:9px; top:20%;left:56%;animation-delay:3s; }
-    .dots span:nth-child(6){ width:11px;height:11px;top:84%;left:66%;animation-delay:5s; }
-    .dots span:nth-child(7){ width:7px; height:7px; top:45%;left:88%;animation-delay:6s; }
-    .dots span:nth-child(8){ width:13px;height:13px;top:62%;left:6%; animation-delay:8s; }
-    @keyframes floatDot {
-      0%,100%{ transform:translateY(0) scale(1); opacity:.6; }
-      50%{ transform:translateY(-8px) scale(1.05); opacity:.8; }
+    .ambient-glow::after {
+      content: '';
+      position: absolute;
+      top: 40%;
+      left: -100px;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(74, 32, 96, 0.3) 0%, transparent 70%);
+      filter: blur(70px);
     }
 
-    /* ─── Layout ─── */
-    .page { position:relative; z-index:1; max-width:1120px; margin:0 auto; padding:40px 24px 60px; }
+    /* Page container */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 20px 20px 40px;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-    /* ─── Temporary Banner ─── */
-    .temp-banner {
+    /* Top bar */
+    .topbar {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 16px 22px;
-      margin-bottom: 28px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(245,166,35,0.18), rgba(245,166,35,0.08));
-      border: 1px solid rgba(245,166,35,0.4);
-      box-shadow: 0 8px 32px rgba(245,166,35,0.12);
-      animation: bannerPulse 3s ease-in-out infinite;
-    }
-    @keyframes bannerPulse {
-      0%,100%{ border-color: rgba(245,166,35,0.4); }
-      50%{ border-color: rgba(245,166,35,0.7); }
-    }
-    .temp-banner .banner-icon {
-      font-size: 28px; flex-shrink: 0;
-    }
-    .temp-banner .banner-text { flex: 1; }
-    .temp-banner .banner-text strong {
-      display: block; color: #FFDAA1; font-size: 0.95rem; font-weight: 700; margin-bottom: 3px;
-    }
-    .temp-banner .banner-text span {
-      color: #D4E6F1; font-size: 0.85rem; line-height: 1.5;
-    }
-    .store-badges {
-      display: flex; gap: 10px; flex-shrink: 0;
-    }
-    .store-badge {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 8px 14px; border-radius: 10px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.16);
-      font-size: 0.78rem; font-weight: 600; color: #E8F2FF;
-      opacity: 0.7;
-    }
-    .store-badge .soon-chip {
-      font-size: 0.6rem; font-weight: 700;
-      background: rgba(245,166,35,0.3); color: #FFDAA1;
-      padding: 2px 6px; border-radius: 999px; letter-spacing: 0.05em;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
     }
 
-    /* ─── Hero ─── */
-    .hero {
-      display: grid;
-      grid-template-columns: 1.25fr 0.95fr;
-      gap: 36px; align-items: center; margin-bottom: 32px;
-    }
-    h1 {
-      font-size: clamp(2.6rem, 5vw, 4.2rem);
-      line-height: 0.98; letter-spacing: -0.06em;
-      max-width: 13ch; text-shadow: 0 24px 70px rgba(0,0,0,0.24);
-    }
-    p.lead {
-      margin-top: 18px; color: #D7E8FF;
-      font-size: 1.02rem; line-height: 1.8; max-width: 42rem;
-    }
-    .pill {
-      display: inline-flex; margin-top: 20px;
-      padding: 10px 16px; border-radius: 999px;
-      border: 1px solid rgba(245,166,35,0.24);
-      background: rgba(245,166,35,0.16);
-      color: #FFDD9C; font-weight: 700; letter-spacing: 0.02em;
-      font-size: 0.85rem;
-    }
-    .visual {
-      position: relative; min-height: 280px; border-radius: 34px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.08); overflow: hidden;
-      box-shadow: 0 30px 120px rgba(0,0,0,0.22);
-    }
-    .visual::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(160deg, rgba(255,255,255,0.1), transparent 45%);
-      pointer-events: none;
-    }
-    .visual .spark {
-      position: absolute; width: 18px; height: 18px; border-radius: 50%;
-      background: rgba(255,255,255,0.9); box-shadow: 0 0 30px rgba(255,255,255,0.65);
-      top: 22%; left: 18%; animation: floaty 8s ease-in-out infinite;
-    }
-    .visual .spark.two{ left:78%;top:16%;animation-duration:10s; }
-    .visual .spark.three{ left:42%;top:72%;animation-duration:7.5s; }
-    .visual .grid-lines {
-      position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
-      background-size: 44px 44px; opacity: 0.6; pointer-events: none;
-    }
-    @keyframes floaty {
-      0%,100%{ transform:translateY(0) scale(1); }
-      50%{ transform:translateY(-18px) scale(1.05); }
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
     }
 
-    /* ─── Tab Nav ─── */
-    .tab-nav {
-      display: flex; gap: 6px;
-      padding: 6px; border-radius: 18px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
-      margin-bottom: 28px; width: fit-content;
-    }
-    .tab-btn {
-      padding: 11px 22px; border-radius: 13px;
-      background: transparent; border: none;
-      color: #9CB8D8; font-family: 'Inter', sans-serif;
-      font-size: 0.88rem; font-weight: 600;
-      cursor: pointer; transition: all 0.22s ease;
-      display: flex; align-items: center; gap: 7px;
-    }
-    .tab-btn:hover { color: #E8F2FF; background: rgba(255,255,255,0.06); }
-    .tab-btn.active {
-      background: linear-gradient(135deg, rgba(245,166,35,0.28), rgba(245,166,35,0.14));
-      color: #FFDD9C; border: 1px solid rgba(245,166,35,0.35);
-    }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ─── Feature cards ─── */
-    .features {
-      display: grid; gap: 18px; margin-bottom: 28px;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-    }
-    .feature-card {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 24px; padding: 22px; color: #E8F2FF;
-    }
-    .feature-card h3 { margin-bottom: 8px; font-size: 1rem; color: #FFDAA1; }
-    .feature-card p { line-height: 1.8; color: #D4E6F1; font-size: 0.9rem; }
-
-    /* ─── Download cards ─── */
-    .download-grid {
-      display: grid; gap: 22px;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-    }
-    .card {
-      position: relative;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 28px; padding: 28px 30px;
-      backdrop-filter: blur(18px);
-      box-shadow: 0 28px 90px rgba(0,0,0,0.18);
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
       overflow: hidden;
-      transition: transform 0.25s ease, border-color 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      flex-shrink: 0;
+      background: #FFFFFF;
     }
-    .card:hover { transform: translateY(-4px); border-color: rgba(245,166,35,0.4); }
-    .card h2 { font-size: 1.25rem; margin-bottom: 12px; }
-    .card p { color: #D4E6F1; line-height: 1.75; margin-bottom: 20px; font-size: 0.92rem; }
-    .card .label { display: inline-flex; gap: 8px; align-items: center; color: #FFDD9C; font-weight: 700; margin-bottom: 14px; font-size: 0.85rem; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 14px 20px; border-radius: 14px; text-decoration: none;
-      color: #13203A; font-weight: 700; font-size: 0.92rem;
-      background: linear-gradient(135deg, #F5A623, #FFDAA1);
-      box-shadow: 0 14px 28px rgba(245,166,35,0.2);
-      transition: transform 0.2s ease;
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .btn span { display:inline-flex; width:30px; height:30px; align-items:center; justify-content:center; border-radius:10px; background:rgba(255,255,255,0.85); color:#13203A; }
 
-    /* ─── Coming soon badge on IPA card ─── */
-    .coming-soon-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 12px 18px; border-radius: 12px;
-      background: rgba(255,255,255,0.06);
-      border: 1px dashed rgba(245,166,35,0.35);
-      color: #FFDAA1; font-weight: 600; font-size: 0.88rem;
+    .brand-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
-    .coming-soon-badge .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #F5A623;
-      animation: dotPulse 1.6s ease-in-out infinite;
-    }
-    @keyframes dotPulse {
-      0%,100%{ opacity:1; transform:scale(1); }
-      50%{ opacity:0.4; transform:scale(0.7); }
-    }
-    .not-released-notice {
-      display: flex; align-items: flex-start; gap: 12px;
-      margin-top: 16px; padding: 14px 16px; border-radius: 14px;
-      background: rgba(255,100,50,0.08);
-      border: 1px solid rgba(255,100,50,0.2);
-      font-size: 0.83rem; color: #FFBCAA; line-height: 1.6;
-    }
-    .not-released-notice .ni-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
 
-    /* ─── Login panel ─── */
-    .login-panel {
-      display: flex; flex-wrap: wrap; align-items: center;
-      justify-content: space-between; gap: 18px;
-      margin: 28px 0; padding: 24px 28px;
-      border: 1px solid rgba(255,255,255,0.16); border-radius: 28px;
-      background: rgba(255,255,255,0.08);
+    .brand-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1.18rem;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
     }
-    .login-panel strong { display:block; font-size:1rem; margin-bottom:8px; color:#F5A623; }
-    .login-panel p { color:#D4E6F1; line-height:1.8; max-width:580px; font-size:0.9rem; }
-    .secondary-btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 14px 20px; border-radius: 14px; color: #F0F8FF;
-      text-decoration: none; font-size: 0.9rem; font-weight: 600;
-      background: rgba(12,25,58,0.95); border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-    .secondary-btn:hover { transform:translateY(-2px); background:rgba(16,36,92,0.98); }
 
-    /* ─── HOW TO USE TAB ─── */
-    .how-section {
-      max-width: 720px; margin: 0 auto;
+    .brand-name span {
+      color: var(--brand);
     }
-    .how-header {
-      text-align: center; padding: 10px 0 28px;
-    }
-    .how-header .bell-icon {
-      font-size: 44px; display: block; margin-bottom: 14px;
-      filter: drop-shadow(0 0 18px rgba(245,166,35,0.5));
-    }
-    .how-header h2 {
-      font-size: 1.8rem; font-weight: 800; color: #fff;
-      margin-bottom: 6px; letter-spacing: -0.03em;
-    }
-    .how-header p { color: #D4E6F1; font-size: 0.95rem; }
 
-    .step-card {
-      display: flex; align-items: flex-start; gap: 18px;
-      padding: 20px 22px; margin-bottom: 14px;
-      background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 20px;
-      transition: transform 0.2s ease, border-color 0.2s ease;
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .step-card:hover { transform: translateX(4px); border-color: rgba(245,166,35,0.35); }
-    .step-icon-wrap {
-      flex-shrink: 0; width: 54px; height: 54px;
+
+    .dashboard-link {
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .dashboard-link:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .social-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .social-pill svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    .social-pill.yt:hover {
+      background: rgba(255, 0, 0, 0.15);
+      border-color: rgba(255, 0, 0, 0.4);
+      color: #FF6666;
+      transform: translateY(-1px);
+    }
+
+    .social-pill.ig:hover {
+      background: rgba(225, 48, 108, 0.15);
+      border-color: rgba(225, 48, 108, 0.4);
+      color: #FF77A9;
+      transform: translateY(-1px);
+    }
+
+    /* Announcement banner */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 16px;
+      background: linear-gradient(90deg, rgba(245, 166, 35, 0.14), rgba(74, 32, 96, 0.25));
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      border-radius: 12px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(12px);
+    }
+
+    .alert-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.86rem;
+      color: var(--text-sub);
+    }
+
+    .alert-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--brand);
+      color: #0D1B3E;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .alert-link {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(245, 166, 35, 0.12);
+      border: 1px solid rgba(245, 166, 35, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .alert-link:hover {
+      background: rgba(245, 166, 35, 0.22);
+      color: #FFF;
+    }
+
+    /* Dense specification pills bar */
+    .spec-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .spec-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      white-space: nowrap;
+    }
+
+    .spec-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: rgba(245,166,35,0.16);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      margin-top: 2px;
+      flex-shrink: 0;
     }
-    .step-num {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
-      color: rgba(245,166,35,0.8); line-height: 1;
+
+    .spec-dot.green { background: #00E676; box-shadow: 0 0 8px rgba(0, 230, 118, 0.6); }
+    .spec-dot.yellow { background: #FFD54F; box-shadow: 0 0 8px rgba(255, 213, 79, 0.6); }
+    .spec-dot.blue { background: #40C4FF; box-shadow: 0 0 8px rgba(64, 196, 255, 0.6); }
+    .spec-dot.purple { background: #E040FB; box-shadow: 0 0 8px rgba(224, 64, 251, 0.6); }
+
+    /* Main side-by-side layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    /* Card styling */
+    .box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 22px 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .section-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    /* Downloads column elements */
+    .app-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .app-card:hover {
+      border-color: var(--card-hover-border);
+    }
+
+    .app-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .platform-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--brand);
+    }
+
+    .status-chip {
+      font-size: 0.66rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+    }
+
+    .status-chip.live {
+      background: rgba(0, 200, 83, 0.16);
+      color: #69F0AE;
+      border: 1px solid rgba(0, 200, 83, 0.35);
+    }
+
+    .status-chip.soon {
+      background: rgba(245, 166, 35, 0.16);
+      color: #FFDAA1;
+      border: 1px solid rgba(245, 166, 35, 0.3);
+    }
+
+    .app-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #FFFFFF;
+    }
+
+    .app-card p {
+      font-size: 0.84rem;
+      color: var(--text-sub);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border-radius: 11px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+      background: linear-gradient(135deg, #00C853, #00E676);
+      color: #032313;
+      box-shadow: 0 8px 20px var(--green-glow);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-play:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 200, 83, 0.38);
+    }
+
+    .btn-play svg {
+      width: 17px;
+      height: 17px;
+      fill: currentColor;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 15px;
+      border-radius: 11px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-sub);
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.24);
+      transform: translateY(-1px);
+    }
+
+    .coming-notice {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+    }
+
+    /* Verification note */
+    .checksum-note {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    .checksum-note a {
+      color: var(--brand);
+      text-decoration: underline;
+    }
+
+    /* How to use steps */
+    .steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 13px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .step-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(245, 166, 35, 0.25);
+    }
+
+    .step-badge {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(245, 166, 35, 0.14);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      color: var(--brand);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-text h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #FFFFFF;
       margin-bottom: 2px;
     }
-    .step-emoji { font-size: 20px; line-height: 1; }
-    .step-body { flex: 1; }
-    .step-body h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 5px; }
-    .step-body p { font-size: 0.86rem; color: #D4E6F1; line-height: 1.7; }
 
-    /* Video row */
-    .video-row {
-      display: flex; align-items: center; gap: 16px;
-      padding: 18px 20px; margin-bottom: 14px;
-      background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(200,50,50,0.3);
-      border-radius: 20px; cursor: pointer; text-decoration: none;
-      transition: transform 0.2s ease, border-color 0.2s ease;
+    .step-text p {
+      font-size: 0.82rem;
+      color: var(--text-sub);
+      line-height: 1.45;
     }
-    .video-row:hover { transform: translateX(4px); border-color: rgba(200,50,50,0.55); }
-    .video-icon-wrap {
-      flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%;
-      background: rgba(200,50,50,0.18);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
-    }
-    .video-row .video-text { flex: 1; }
-    .video-row .video-text strong { display: block; font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
-    .video-row .video-text span { font-size: 0.8rem; color: #D4E6F1; }
-    .video-row .ext-arrow { font-size: 18px; color: #D4E6F1; }
 
-    /* Pro tip */
-    .pro-tip {
-      display: flex; align-items: flex-start; gap: 16px;
-      padding: 20px 22px;
-      background: rgba(245,166,35,0.08);
-      border: 1px solid rgba(245,166,35,0.25);
-      border-radius: 20px; margin-top: 6px;
+    /* App metadata badges */
+    .app-meta-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .pro-tip .tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
-    .pro-tip .tip-body h3 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
-    .pro-tip .tip-body p { font-size: 0.84rem; color: #D4E6F1; line-height: 1.75; }
 
-    /* ─── Footer ─── */
-    .footer {
-      margin-top: 36px; display: flex; flex-wrap: wrap; gap: 18px;
-      align-items: center; justify-content: space-between;
-      padding: 24px 30px; border-radius: 26px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.14);
+    .meta-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .footer strong { color: #F5A623; }
-    .footer p { color: #D4E6F1; font-size: 0.88rem; }
 
-    /* ─── Responsive ─── */
+    /* Dual Official Channels (YouTube & Instagram) */
+    .channels-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .channel-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      text-decoration: none;
+      color: #FFFFFF;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .channel-card.yt {
+      background: linear-gradient(135deg, rgba(230, 33, 23, 0.14), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(230, 33, 23, 0.32);
+    }
+
+    .channel-card.yt:hover {
+      background: linear-gradient(135deg, rgba(230, 33, 23, 0.25), rgba(255, 255, 255, 0.06));
+      border-color: rgba(255, 68, 68, 0.55);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(230, 33, 23, 0.22);
+    }
+
+    .channel-card.ig {
+      background: linear-gradient(135deg, rgba(225, 48, 108, 0.14), rgba(131, 58, 180, 0.12));
+      border: 1px solid rgba(225, 48, 108, 0.32);
+    }
+
+    .channel-card.ig:hover {
+      background: linear-gradient(135deg, rgba(225, 48, 108, 0.25), rgba(131, 58, 180, 0.22));
+      border-color: rgba(255, 105, 180, 0.55);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(225, 48, 108, 0.22);
+    }
+
+    .channel-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .channel-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .channel-icon.yt {
+      background: #E62117;
+      color: #fff;
+    }
+
+    .channel-icon.ig {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+    }
+
+    .channel-icon svg {
+      width: 17px;
+      height: 17px;
+      fill: currentColor;
+    }
+
+    .channel-meta h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.25;
+    }
+
+    .channel-meta span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .channel-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .channel-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .channel-card.yt .channel-action {
+      color: #FF6666;
+    }
+
+    .channel-card.ig .channel-action {
+      color: #FF80BF;
+    }
+
+    /* Pro-tip inline */
+    .quick-tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(245, 166, 35, 0.08);
+      border: 1px solid rgba(245, 166, 35, 0.2);
+      border-radius: 11px;
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    .quick-tip strong {
+      color: var(--brand);
+    }
+
+    /* Footer */
+    .compact-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .footer-links a {
+      color: var(--text-sub);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-links a:hover {
+      color: var(--brand);
+      text-decoration: underline;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       MOBILE & RESPONSIVE REFINEMENTS
+       ═══════════════════════════════════════════════════ */
     @media (max-width: 860px) {
-      .hero { grid-template-columns: 1fr; }
-      .download-grid { grid-template-columns: 1fr; }
-      .features { grid-template-columns: 1fr; }
-      .store-badges { flex-direction: column; }
-      .temp-banner { flex-wrap: wrap; }
+      .main-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .spec-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .channels-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .top-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .wrapper {
+        padding: 16px 14px 32px;
+      }
+
+      .box {
+        padding: 18px 16px;
+      }
+
+      .alert-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .btn-play,
+      .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .topbar {
+        padding-bottom: 14px;
+        margin-bottom: 16px;
+      }
     }
-    @media (max-width: 540px) {
-      .tab-btn { padding: 9px 14px; font-size: 0.8rem; }
+
+    @media (max-width: 480px) {
+      .spec-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .brand-name {
+        font-size: 1.05rem;
+      }
+
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 17px;
+      }
+
+      .dashboard-link,
+      .social-pill {
+        padding: 5px 9px;
+        font-size: 0.74rem;
+      }
+
+      .compact-footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="dots">
-    <span></span><span></span><span></span><span></span>
-    <span></span><span></span><span></span><span></span>
-  </div>
+  <div class="ambient-glow"></div>
 
-  <main class="page">
+  <main class="wrapper">
 
-    <!-- ══ TEMPORARY NOTICE BANNER ══ -->
-    <div class="temp-banner">
-      <div class="banner-icon">⚠️</div>
-      <div class="banner-text">
-        <strong>This is a temporary release portal</strong>
-        <span>Official app store releases are coming soon. DvaraBell will be available on the Google Play Store and Apple App Store — stay tuned!</span>
-      </div>
-      <div class="store-badges">
-        <div class="store-badge">
-          <span>▶</span> Google Play <span class="soon-chip">SOON</span>
+    <!-- ══ HEADER / TOPBAR ══ -->
+    <header class="topbar">
+      <a class="brand-logo" href="#">
+        <div class="brand-icon">
+          <img src="logo.png" alt="DvaraBell Logo" width="44" height="44">
         </div>
-        <div class="store-badge">
-          <span>🍎</span> App Store <span class="soon-chip">SOON</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ HERO ══ -->
-    <section class="hero">
-      <div>
-        <h1>Download the DvaraBell apps directly.</h1>
-        <p class="lead">A simple static page for getting the Android APK and iOS app file. No signup, no app store wait — just direct app access for quick testing or sharing.</p>
-        <div class="pill">Direct downloads • free to use • app-store free</div>
-      </div>
-      <div class="visual">
-        <div class="grid-lines"></div>
-        <div class="spark"></div>
-        <div class="spark two"></div>
-        <div class="spark three"></div>
-      </div>
-    </section>
-
-    <!-- ══ TAB NAV ══ -->
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('downloads', this)" id="tab-downloads">
-        ⬇️ Downloads
-      </button>
-      <button class="tab-btn" onclick="switchTab('howto', this)" id="tab-howto">
-        ❓ How To Use
-      </button>
-    </div>
-
-    <!-- ══════════════════════════════════ -->
-    <!--          DOWNLOADS TAB            -->
-    <!-- ══════════════════════════════════ -->
-    <div class="tab-panel active" id="panel-downloads">
-
-      <section class="features">
-        <div class="feature-card">
-          <h3>Easy app download</h3>
-          <p>Get the DvaraBell app file directly for Android or iOS — no app store search needed.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Live visitor calling</h3>
-          <p>DvaraBell uses WebRTC so your phone connects to visitors instantly, just like a video call.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Free to download</h3>
-          <p>Download both app files without cost. This page is just for getting the apps fast.</p>
-        </div>
-      </section>
-
-      <section class="download-grid">
-
-        <!-- Android APK -->
-        <article class="card">
-          <div class="label">🤖 Android</div>
-          <h2>Download APK</h2>
-          <p>Tap below to download the Android APK (zipped). Unzip the file, then install <strong>dvarabell 6.6.26.apk</strong> on your Android phone.</p>
-          <a class="btn" href="dvarabell%206.6.26.apk.zip" download="dvarabell 6.6.26.apk.zip">
-            <span>⬇</span> Download APK
-          </a>
-        </article>
-
-        <!-- iOS IPA — Coming Soon -->
-        <article class="card">
-          <div class="label">🍎 iOS</div>
-          <h2>Download IPA</h2>
-          <p>The iOS IPA file will be available here soon. The App Store release is also on its way!</p>
-
-          <div class="coming-soon-badge">
-            <div class="dot"></div>
-            Not yet released — coming soon
-          </div>
-
-          <div class="not-released-notice">
-            <span class="ni-icon">ℹ️</span>
-            <span>The iOS version is <strong>not yet publicly released</strong>. We are working on distributing it via TestFlight and the Apple App Store. Check back here for the download link once it's ready.</span>
-          </div>
-        </article>
-
-      </section>
-
-      <section style="margin-top:16px;">
-        <small style="color:#BFDFFF;">Verified checksums available: <a href="CHECKSUMS.txt" style="color:#FFDAA1; text-decoration:underline;" target="_blank" rel="noopener">CHECKSUMS.txt</a></small>
-      </section>
-
-      <section class="login-panel">
-        <div>
-          <strong>Need the full web login?</strong>
-          <p>Open the live DvaraBell dashboard to sign in and manage the app from the browser.</p>
-        </div>
-        <a class="secondary-btn" href="https://dvarabell-y5j2.onrender.com/" target="_blank" rel="noopener">Go to Dashboard</a>
-      </section>
-
-    </div><!-- /panel-downloads -->
-
-    <!-- ══════════════════════════════════ -->
-    <!--          HOW TO USE TAB           -->
-    <!-- ══════════════════════════════════ -->
-    <div class="tab-panel" id="panel-howto">
-      <div class="how-section">
-
-        <div class="how-header">
-          <span class="bell-icon">🔔</span>
-          <h2>How To Use DvaraBell</h2>
-          <p>Set up your smart doorbell in minutes</p>
-        </div>
-
-        <!-- Step 1 -->
-        <div class="step-card">
-          <div class="step-icon-wrap">
-            <div class="step-num">01</div>
-            <div class="step-emoji">📱</div>
-          </div>
-          <div class="step-body">
-            <h3>Get Your QR Code</h3>
-            <p>Open the Home tab to see your personal QR code and numeric access code. This is unique to your door.</p>
-          </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="step-card">
-          <div class="step-icon-wrap">
-            <div class="step-num">02</div>
-            <div class="step-emoji">🖨️</div>
-          </div>
-          <div class="step-body">
-            <h3>Print &amp; Place It</h3>
-            <p>Print the QR code and stick it near your front door, gate, or anywhere visitors will see it.</p>
-          </div>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="step-card">
-          <div class="step-icon-wrap">
-            <div class="step-num">03</div>
-            <div class="step-emoji">📲</div>
-          </div>
-          <div class="step-body">
-            <h3>Visitor Scans It</h3>
-            <p>Visitors point their phone camera at the QR code — no app needed. It opens instantly in their browser.</p>
-          </div>
-        </div>
-
-        <!-- Step 4 -->
-        <div class="step-card">
-          <div class="step-icon-wrap">
-            <div class="step-num">04</div>
-            <div class="step-emoji">🔔</div>
-          </div>
-          <div class="step-body">
-            <h3>You Get a Call</h3>
-            <p>Your phone rings with a full-screen alert. Answer or decline right from the lock screen.</p>
-          </div>
-        </div>
-
-        <!-- Step 5 -->
-        <div class="step-card">
-          <div class="step-icon-wrap">
-            <div class="step-num">05</div>
-            <div class="step-emoji">📹</div>
-          </div>
-          <div class="step-body">
-            <h3>Live Video Call</h3>
-            <p>Accept the call to see and speak to your visitor in real time — even from anywhere in the world.</p>
-          </div>
-        </div>
-
-        <!-- Watch video -->
-        <a class="video-row" href="https://www.youtube.com/watch?v=XRAiEIewsRc" target="_blank" rel="noopener">
-          <div class="video-icon-wrap">▶️</div>
-          <div class="video-text">
-            <strong>Watch: How It Works</strong>
-            <span>Opens in YouTube</span>
-          </div>
-          <span class="ext-arrow">↗</span>
+        <div class="brand-name">Dvara<span>Bell</span></div>
+      </a>
+      <div class="top-actions">
+        <a class="social-pill yt" href="https://www.youtube.com/@DvaraBell" target="_blank" rel="noopener noreferrer" title="DvaraBell on YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube
         </a>
+        <a class="social-pill ig" href="https://www.instagram.com/dvarabell/" target="_blank" rel="noopener noreferrer" title="DvaraBell on Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          Instagram
+        </a>
+        <a class="dashboard-link" href="https://dvarabell-y5j2.onrender.com/" target="_blank" rel="noopener">
+          Live Web Dashboard &rarr;
+        </a>
+      </div>
+    </header>
+
+    <!-- ══ LIVE BANNER ══ -->
+    <div class="alert-banner">
+      <div class="alert-content">
+        <span class="alert-badge">NEW</span>
+        <span>DvaraBell is officially available on the Google Play Store!</span>
+      </div>
+      <a class="alert-link"
+        href="https://play.google.com/store/apps/details?id=com.dvarabell.intercom&pcampaignid=web_share"
+        target="_blank" rel="noopener">
+        View on Play Store &rarr;
+      </a>
+    </div>
+
+    <!-- ══ DENSE SYSTEM SPEC STRIP ══ -->
+    <div class="spec-strip">
+      <div class="spec-item"><span class="spec-dot green"></span> Zero Visitor App Required</div>
+      <div class="spec-item"><span class="spec-dot yellow"></span> Instant WebRTC Video Calls</div>
+      <div class="spec-item"><span class="spec-dot blue"></span> End-to-End Encrypted Relay</div>
+      <div class="spec-item"><span class="spec-dot purple"></span> Multi-Member Household Ring</div>
+    </div>
+
+    <!-- ══ DENSE SIDE-BY-SIDE GRID (Downloads + How To Use) ══ -->
+    <div class="main-grid">
+
+      <!-- COLUMN 1: DOWNLOADS -->
+      <section class="box">
+        <h2 class="section-title">
+          <span>📲</span> App Downloads
+        </h2>
+        <p class="section-subtitle">Install the official smart doorbell app to receive instant video visitor alerts.</p>
+
+        <!-- Android Release -->
+        <article class="app-card">
+          <div class="app-card-header">
+            <span class="platform-tag">🤖 Android</span>
+            <span class="status-chip live">● GOOGLE PLAY</span>
+          </div>
+          <h3>DvaraBell for Android</h3>
+          <p>Get the verified release with seamless auto-updates from Google Play, or download the direct standalone APK
+            file.</p>
+          <div class="btn-row">
+            <a class="btn-play"
+              href="https://play.google.com/store/apps/details?id=com.dvarabell.intercom&pcampaignid=web_share"
+              target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M3.6 1.8c-.3.3-.5.8-.5 1.4v17.6c0 .6.2 1.1.5 1.4l.1.1 9.9-9.9v-.2L3.7 1.7l-.1.1zM17.4 15.6l-3.3-3.3v-.2l3.3-3.3.1.1 3.9 2.2c1.1.6 1.1 1.6 0 2.2l-3.9 2.2-.1.1zm-3.8-3.4L3.7 22.1c.4.4 1 .4 1.7 0l11.4-6.4-3.2-3.5zm0-.4L16.8 8.3 5.4 1.9c-.7-.4-1.3-.4-1.7 0l10 9.9z" />
+              </svg>
+              Get on Google Play
+            </a>
+            <a class="btn-secondary" href="dvarabell%206.6.26.apk.zip" download="dvarabell 6.6.26.apk.zip"
+              title="Download standalone APK zip">
+              Direct APK (.zip)
+            </a>
+          </div>
+          <div class="app-meta-badges">
+            <span class="meta-badge">v1.0 (Build 6.6.26)</span>
+            <span class="meta-badge">Android 8.0+</span>
+            <span class="meta-badge">Signed AAB &amp; APK</span>
+            <span class="meta-badge">Official BLSS</span>
+          </div>
+        </article>
+
+        <!-- iOS Release -->
+        <article class="app-card">
+          <div class="app-card-header">
+            <span class="platform-tag">🍎 Apple iOS</span>
+            <span class="status-chip soon">COMING SOON</span>
+          </div>
+          <h3>DvaraBell for iPhone</h3>
+          <p>Native Swift iOS app currently in preparation for Apple TestFlight and the App Store.</p>
+          <div class="coming-notice">
+            <span>⏳</span> Submitting to App Store review • Stay tuned
+          </div>
+        </article>
+
+        <div class="checksum-note">
+          Security: <a href="CHECKSUMS.txt" target="_blank" rel="noopener">SHA-256 Checksums</a> verified for standalone
+          releases.
+        </div>
+      </section>
+
+      <!-- COLUMN 2: HOW TO USE -->
+      <section class="box">
+        <h2 class="section-title">
+          <span>🔔</span> How It Works
+        </h2>
+        <p class="section-subtitle">Set up your door in 2 minutes. No complicated wiring or hardware hubs needed.</p>
+
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-badge">1</div>
+            <div class="step-text">
+              <h4>Get Your QR Code</h4>
+              <p>Sign in to the app to generate your unique, encrypted door QR code.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-badge">2</div>
+            <div class="step-text">
+              <h4>Print &amp; Stick at Door</h4>
+              <p>Place the QR sticker near your entrance, front gate, or intercom panel.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-badge">3</div>
+            <div class="step-text">
+              <h4>Visitor Scans Instantly</h4>
+              <p>Visitors scan using any camera phone. No visitor app download required.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-badge">4</div>
+            <div class="step-text">
+              <h4>Phone Rings with Live Call</h4>
+              <p>Answer full-screen WebRTC video calls anywhere in real time.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dual Official Channels (YouTube & Instagram) -->
+        <div class="channels-grid">
+          <!-- YouTube Card -->
+          <a class="channel-card yt" href="https://www.youtube.com/@DvaraBell" target="_blank" rel="noopener noreferrer">
+            <div class="channel-top">
+              <div class="channel-icon yt">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </div>
+              <div class="channel-meta">
+                <h4>YouTube: @DvaraBell</h4>
+                <span>Video walkthroughs &amp; demos</span>
+              </div>
+            </div>
+            <div class="channel-footer">
+              <span>Watch Tutorials</span>
+              <span class="channel-action">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Instagram Card -->
+          <a class="channel-card ig" href="https://www.instagram.com/dvarabell/" target="_blank" rel="noopener noreferrer">
+            <div class="channel-top">
+              <div class="channel-icon ig">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </div>
+              <div class="channel-meta">
+                <h4>Instagram: @dvarabell</h4>
+                <span>Updates, stories &amp; sneak peeks</span>
+              </div>
+            </div>
+            <div class="channel-footer">
+              <span>Follow Official</span>
+              <span class="channel-action">Open &rarr;</span>
+            </div>
+          </a>
+        </div>
 
         <!-- Pro Tip -->
-        <div class="pro-tip">
-          <div class="tip-icon">💡</div>
-          <div class="tip-body">
-            <h3>Pro Tip</h3>
-            <p>For the best experience, keep DvaraBell running in the background. This ensures you never miss a visitor — your phone will alert you instantly the moment someone rings your door.</p>
+        <div class="quick-tip">
+          <span>💡</span>
+          <div>
+            <strong>Pro Tip:</strong> Keep background permissions active on Android so incoming door alerts ring your
+            device even when locked.
           </div>
         </div>
+      </section>
 
-      </div>
-    </div><!-- /panel-howto -->
+    </div>
 
-    <!-- ══ FOOTER ══ -->
-    <section class="footer">
-      <div>
-        <strong>Ready to download.</strong>
-        <p>Select your device and download the app file instantly. This page is for people who want DvaraBell right now.</p>
-        <p style="margin-top:8px;">
-          <a href="TERMS_AND_CONDITIONS.md" target="_blank" rel="noopener" style="color:#FFDAA1; text-decoration:underline;">Terms &amp; Conditions</a>
-          &nbsp;·&nbsp;
-          <a href="PRIVACY_POLICY.md" target="_blank" rel="noopener" style="color:#FFDAA1; text-decoration:underline;">Privacy Policy</a>
-        </p>
+    <!-- ══ COMPACT FOOTER ══ -->
+    <footer class="compact-footer">
+      <div>&copy; 2026 BLSS. All rights reserved. DvaraBell Intercom.</div>
+      <div class="footer-links">
+        <a href="https://www.youtube.com/@DvaraBell" target="_blank" rel="noopener noreferrer">YouTube</a>
+        <a href="https://www.instagram.com/dvarabell/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>
+        <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
       </div>
-    </section>
+    </footer>
 
   </main>
-
-  <script>
-    function switchTab(name, btn) {
-      // Hide all panels
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      // Deactivate all buttons
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      // Show selected
-      document.getElementById('panel-' + name).classList.add('active');
-      btn.classList.add('active');
-    }
-  </script>
 </body>
+
 </html>
