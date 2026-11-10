@@ -699,6 +699,51 @@
       color: var(--brand);
     }
 
+    /* Security and Architecture Grid */
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .sec-card {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border-color 0.2s;
+    }
+    .sec-card:hover {
+      border-color: rgba(245, 166, 35, 0.3);
+    }
+    .sec-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .sec-icon {
+      font-size: 1.1rem;
+    }
+    .sec-card-header h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #FFF;
+    }
+    .sec-card p {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      line-height: 1.45;
+      margin: 0;
+    }
+    .sec-card code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: var(--brand);
+    }
+
     /* Footer */
     .compact-footer {
       margin-top: 24px;
@@ -748,6 +793,10 @@
       }
 
       .channels-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .security-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1023,6 +1072,48 @@
       </section>
 
     </div>
+
+    <!-- ══ DENSE ARCHITECTURE, SECURITY & PRIVACY SPECS ══ -->
+    <section class="box" style="margin-top: 18px;">
+      <h2 class="section-title">
+        <span>🛡️</span> Security, Privacy &amp; Ringing Architecture
+      </h2>
+      <p class="section-subtitle">Engineered with zero-trust privacy, encrypted TURN media relays, and 4-tier alert redundancy.</p>
+
+      <div class="security-grid">
+        <div class="sec-card">
+          <div class="sec-card-header">
+            <span class="sec-icon">🔒</span>
+            <h4>Encrypted TURN Relay (Zero IP Exposure)</h4>
+          </div>
+          <p>Enforces strict WebRTC <code>iceTransportPolicy: 'relay'</code> via TLS/TCP proxies. Direct peer-to-peer candidate exchange is disabled so neither homeowner nor visitor IP addresses, ISPs, or physical locations are ever exposed.</p>
+        </div>
+
+        <div class="sec-card">
+          <div class="sec-card-header">
+            <span class="sec-icon">⏱️</span>
+            <h4>Strict 10-Day Automated Retention</h4>
+          </div>
+          <p>All visitor voice notes, call recordings, photo drop-offs, and activity logs are automatically purged by our daily database cutoff worker after 10 days. Homeowners can also instantly wipe all logs with one tap.</p>
+        </div>
+
+        <div class="sec-card">
+          <div class="sec-card-header">
+            <span class="sec-icon">🔑</span>
+            <h4>Placard Rotation &amp; Anti-Abuse Guard</h4>
+          </div>
+          <p>QR placards encode zero personal contact details. Homeowners can instantly revoke or rotate their placard from Settings. Signaled calls use single-use cryptographic UUIDs protected by server-side rate limits.</p>
+        </div>
+
+        <div class="sec-card">
+          <div class="sec-card-header">
+            <span class="sec-icon">⚡</span>
+            <h4>4-Tier Alert Redundancy Pipeline</h4>
+          </div>
+          <p>Tier 1: Native APNs VoIP / FCM push. Tier 2: Simultaneous multi-device household ringing. Tier 3: 15-second fail-safe Twilio SMS/voice call backup. Tier 4: Offline visitor self-service fallback.</p>
+        </div>
+      </div>
+    </section>
 
     <!-- ══ COMPACT FOOTER ══ -->
     <footer class="compact-footer">
